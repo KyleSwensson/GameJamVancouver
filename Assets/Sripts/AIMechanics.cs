@@ -31,6 +31,8 @@ public class AIMechanics : MonoBehaviour {
 		curDirection = new Vector3(0.3f,0,0);
 		curDirectionName = "East";
 		isPause = false;
+		disableChildRenderer ();
+		this.gameObject.transform.GetChild (convert ("East")).gameObject.GetComponent<SpriteRenderer>().enabled = true;
 	}
 	
 	// Update is called once per frame
@@ -40,9 +42,11 @@ public class AIMechanics : MonoBehaviour {
 			nextMovement = Time.time + speed;
 		}
 
-		if (Time.time > nextDir && isAtBranch()) {	
-			changeDir();
-			nextDir = Time.time + dirSpeed;
+		if (isAtBranch()) {	
+			if(Time.time > nextDir){
+				changeDir();
+				nextDir = Time.time + dirSpeed;
+			}
 		}
 
 		if (Time.time > nextPause) {
@@ -91,11 +95,13 @@ public class AIMechanics : MonoBehaviour {
 
 	public void changeDir(){
 
+		this.gameObject.transform.GetChild (convert (curDirectionName)).gameObject.GetComponent<SpriteRenderer>().enabled = false;
 		int index = generateIndex ();
 
 		if (canMove(index)) {
 			curDirection = directions[index];
 			curDirectionName = directionNames [index];
+			this.gameObject.transform.GetChild (index).gameObject.GetComponent<SpriteRenderer>().enabled = true;
 		}
 
 	}
@@ -160,4 +166,10 @@ public class AIMechanics : MonoBehaviour {
 	}
 
 
+	void disableChildRenderer ()
+	{
+		for (int i = 0; i < 4; i ++){
+			this.gameObject.transform.GetChild (i).gameObject.GetComponent<SpriteRenderer>().enabled = false;
+		}
+	}
 }	

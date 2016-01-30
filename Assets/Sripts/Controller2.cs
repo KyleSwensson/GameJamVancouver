@@ -13,10 +13,6 @@ public class Controller2 : MonoBehaviour {
 
 	public Boundary boundary;
 
-	private bool foundtheFuckingAI = false;
-
-	private GameObject thatSHittyAI = null;
-
 	public int MYAWESOMESCORE = 0;
 	
 	//	public bool facingRight = true;
@@ -31,14 +27,6 @@ public class Controller2 : MonoBehaviour {
 	}
 
 	void Update(){
-		if(Input.GetKeyDown (KeyCode.Space))
-		{
-			//check for player's collision with game object tagged Dock
-			if (foundtheFuckingAI && (thatSHittyAI != null)){
-				Destroy(thatSHittyAI);
-				MYAWESOMESCORE += 1;
-			}
-		}
 	}
 
 	// Update is called once per frame
@@ -55,7 +43,13 @@ public class Controller2 : MonoBehaviour {
 
 		float moveHorizontal = Input.GetAxis ("Horizontal");
 		float moveVertical = Input.GetAxis ("Vertical");
-		
+
+//		if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)){
+//			moveVertical = 0f;
+//		} else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
+//			moveHorizontal = 0f;
+//		}
+
 		transform.position += new Vector3 (moveHorizontal, moveVertical, 0).normalized * Time.deltaTime * maxSpeed;
 		
 		GetComponent<Rigidbody2D>().position = new Vector3 
@@ -74,19 +68,11 @@ public class Controller2 : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D coll) {
 		if (coll.gameObject.tag == "People") {
-			//Destroy (coll.gameObject);
-			foundtheFuckingAI = true;	
-			thatSHittyAI = coll.gameObject;
+			Destroy(coll.gameObject);
+			MYAWESOMESCORE += 1;
 		}
 	}
 
-	void OnCollisionExit2D(Collision2D coll) {
-		if (coll.gameObject.tag == "People") {
-			//Destroy (coll.gameObject);
-			foundtheFuckingAI = false;	
-			thatSHittyAI = null;
-		}
-	}
 
 
 
