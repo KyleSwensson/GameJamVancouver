@@ -12,6 +12,12 @@ public class Controller2 : MonoBehaviour {
 	public float maxSpeed = 10f;
 
 	public Boundary boundary;
+
+	private bool foundtheFuckingAI = false;
+
+	private GameObject thatSHittyAI = null;
+
+	public int MYAWESOMESCORE = 0;
 	
 	//	public bool facingRight = true;
 //	
@@ -24,10 +30,19 @@ public class Controller2 : MonoBehaviour {
 		
 	}
 
-	
+	void Update(){
+		if(Input.GetKeyDown (KeyCode.Space))
+		{
+			//check for player's collision with game object tagged Dock
+			if (foundtheFuckingAI && (thatSHittyAI != null)){
+				Destroy(thatSHittyAI);
+				MYAWESOMESCORE += 1;
+			}
+		}
+	}
+
 	// Update is called once per frame
 	void FixedUpdate () {
-
 
 			move ();
 
@@ -55,6 +70,22 @@ public class Controller2 : MonoBehaviour {
 //		else if (moveHorizontal < 0 && facingRight)
 //			Flip ();
 		
+	}
+
+	void OnCollisionEnter2D(Collision2D coll) {
+		if (coll.gameObject.tag == "People") {
+			//Destroy (coll.gameObject);
+			foundtheFuckingAI = true;	
+			thatSHittyAI = coll.gameObject;
+		}
+	}
+
+	void OnCollisionExit2D(Collision2D coll) {
+		if (coll.gameObject.tag == "People") {
+			//Destroy (coll.gameObject);
+			foundtheFuckingAI = false;	
+			thatSHittyAI = null;
+		}
 	}
 
 

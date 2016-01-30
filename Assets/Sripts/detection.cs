@@ -20,7 +20,6 @@ public class detection : MonoBehaviour {
 		canMove = false;
 		if (other.CompareTag("People")){
 			canMove = false;
-			Debug.Log("people");
 		} else if (other.CompareTag("Player")){
 			playerDetected = true;
 		}

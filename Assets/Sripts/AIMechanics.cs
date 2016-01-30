@@ -155,7 +155,7 @@ public class AIMechanics : MonoBehaviour {
 
 	public void checkPlayer(){
 		if (playerDetected(convert (curDirectionName))){
-			Debug.Log ("FOUND YOUU!!");
+			//Debug.Log ("FOUND YOUU!!");
 		}
 	}
 
