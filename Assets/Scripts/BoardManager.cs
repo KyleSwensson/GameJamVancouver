@@ -20,7 +20,7 @@ public class BoardManager : MonoBehaviour {
 
     public int columns = 32;
     public int rows = 32;
-    public Count wallCount = new Count(110, 112); // min 5 wells per level max 10
+    public Count wallCount = new Count(140, 142); // min 5 wells per level max 10
     public GameObject wallTile;
     public GameObject floorTile;
     
@@ -30,6 +30,15 @@ public class BoardManager : MonoBehaviour {
 
     private List<Vector3> gridPositions = new List<Vector3>(); //keeps track of all spots in gameboard
     private List<Vector3> walledGridPositions = new List<Vector3>(); // keeps track of all of the spaces where walls have already been placed
+
+    private Vector3 topRightCornerPos = new Vector3(32 - 1, 32 - 1);
+    private Vector3 topLeftCornerPos = new Vector3(1, 32 - 1);
+    private Vector3 bottomRightCornerPos = new Vector3(32 - 1, 1);
+    private Vector3 bottomLeftCornerPos = new Vector3(1, 1);
+
+
+
+
 
     void InitializeList()
     {
@@ -91,7 +100,12 @@ public class BoardManager : MonoBehaviour {
         Vector3 pos3 = new Vector3(pos.x - 1, pos.y);
         Vector3 pos4 = new Vector3(pos.x, pos.y + 1);
         Vector3 pos5 = new Vector3(pos.x, pos.y + 1);
-        if (walledGridPositions.Contains(pos) || walledGridPositions.Contains(pos2) || walledGridPositions.Contains(pos3) || walledGridPositions.Contains(pos4) || walledGridPositions.Contains(pos5))
+        Vector3 pos6 = new Vector3(pos.x + 1, pos.y + 1);
+        Vector3 pos7 = new Vector3(pos.x - 1, pos.y - 1);
+        Vector3 pos8 = new Vector3(pos.x - 1, pos.y + 1);
+        Vector3 pos9 = new Vector3(pos.x + 1, pos.y - 1);
+        if (walledGridPositions.Contains(pos) || walledGridPositions.Contains(pos2) || walledGridPositions.Contains(pos3) || walledGridPositions.Contains(pos4) || walledGridPositions.Contains(pos5)
+             || walledGridPositions.Contains(pos6) || walledGridPositions.Contains(pos7) || walledGridPositions.Contains(pos8) || walledGridPositions.Contains(pos9))
             return false;
         else
         {
@@ -115,7 +129,17 @@ public class BoardManager : MonoBehaviour {
             // if the block is a t shaped block it makes walls at (x,y)(x,y-1)(x-1,y-1)(x+1,y-1)
             // if the block is I shaped it makes walls at (x,y)(x+1,y)(x+2,y)(x+3,y)
             // if the block is L shaped it makes walls at (x,y)(x+1,y)(x,y-1)(x,y-2)
-            int shapeType = Random.Range(0, 4); // creates a number 0,1,2,3
+
+            // side i (x,y)(x,y+1)(x,y+2)(x,y+3) /
+            // upside down t (x,y)(x,y + 1)(x+1,y+1)(x-1,y+1) /
+            // sideways T (x,y)(x+1,y)(x+1,y+1)(x+1,y-1) /
+            // other sideways T (x,y) (x-1,y) (x-1,y+1) (x-1,y-1)/
+            // flipped horizontally L (x,y) (x-1,y) (x,y-1)(x,y-2) /
+            // flipped vertically L (x,y)(x+1,y)(x,y+1)(x,y+2) /
+            // flipped vert and horiz L (x,y)(x-1,y)(x,y+1)(x,y+2) /
+
+
+            int shapeType = Random.Range(0, 11); // creates a number 0,1,2,3... 10
             // if tile is 0 square block, if tile is 1 T block, if type is 2 I block, if type is 3 L block
             Vector3 pos1;
             Vector3 pos2;
@@ -150,12 +174,62 @@ public class BoardManager : MonoBehaviour {
                     pos3 = new Vector3(randomPosition.x + 2, randomPosition.y);
                     pos4 = new Vector3(randomPosition.x + 3, randomPosition.y);
                 }
-                else  // if shapetile == 3
+                else  if (shapeType == 3)// if shapetile == 3
                 {
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
                     pos3 = new Vector3(randomPosition.x, randomPosition.y - 1);
                     pos4 = new Vector3(randomPosition.x, randomPosition.y - 2);
+                } else if (shapeType == 4)
+                {
+                    //(x, y)(x, y+1)(x, y+2)(x, y+3)
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos3 = new Vector3(randomPosition.x, randomPosition.y + 2);
+                    pos4 = new Vector3(randomPosition.x, randomPosition.y + 3);
+                } else if (shapeType == 5)
+                {
+                    //(x, y)(x, y +1)(x + 1,y + 1)(x - 1,y + 1) /
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos3 = new Vector3(randomPosition.x + 1, randomPosition.y + 1);
+                    pos4 = new Vector3(randomPosition.x - 1, randomPosition.y + 1);
+                } else if (shapeType == 6)
+                {
+                    // sideways T (x,y)(x+1,y)(x+1,y+1)(x+1,y-1) /
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
+                    pos3 = new Vector3(randomPosition.x + 1,  randomPosition.y + 1);
+                    pos4 = new Vector3(randomPosition.x + 1, randomPosition.y - 1);
+
+                } else if (shapeType == 7)
+                {
+                    // other sideways T (x,y) (x-1,y) (x-1,y+1) (x-1,y-1)/
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x - 1, randomPosition.y);
+                    pos3 = new Vector3(randomPosition.x - 1, randomPosition.y + 1);
+                    pos4 = new Vector3(randomPosition.x - 1, randomPosition.y - 1);
+                } else if (shapeType == 8)
+                {
+                    // flipped horizontally L (x,y) (x-1,y) (x,y-1)(x,y-2) /
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x - 1, randomPosition.y);
+                    pos3 = new Vector3(randomPosition.x, randomPosition.y - 1);
+                    pos4 = new Vector3(randomPosition.x, randomPosition.y - 2);
+                } else if (shapeType == 9)
+                {
+                    // flipped vertically L (x,y)(x+1,y)(x,y+1)(x,y+2) /
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
+                    pos3 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos4 = new Vector3(randomPosition.x, randomPosition.y + 2);
+                } else // if shapeType == 10
+                {
+                    // flipped vert and horiz L (x,y)(x-1,y)(x,y+1)(x,y+2) /
+                    pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos2 = new Vector3(randomPosition.x - 1, randomPosition.y);
+                    pos3 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos4 = new Vector3(randomPosition.x, randomPosition.y + 2);
                 }
             } while (!canCreateBlockAtPos(randomPosition) || !canCreateBlockAtPos(pos1) || !canCreateBlockAtPos(pos2) || !canCreateBlockAtPos(pos3) || !canCreateBlockAtPos(pos4));
             Instantiate(tileToPlace, pos1, Quaternion.identity);
@@ -179,8 +253,8 @@ public class BoardManager : MonoBehaviour {
     }
 	// Use this for initialization
 	void Start () {
-	
-	}
+      
+}
 
  
 	
