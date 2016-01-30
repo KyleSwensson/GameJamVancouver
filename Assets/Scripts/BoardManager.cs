@@ -23,6 +23,7 @@ public class BoardManager : MonoBehaviour {
     public Count wallCount = new Count(110, 112); // min 5 wells per level max 10
     public GameObject wallTile;
     public GameObject floorTile;
+    
 
     private Transform boardHolder; // keeps hierarchy clean
 
@@ -67,10 +68,14 @@ public class BoardManager : MonoBehaviour {
                 GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
 
                 instance.transform.SetParent(boardHolder);
+
+                
             }
         }
+        
     }
 
+   
     Vector3 RandomPosition()
     {
         int randomIndex = Random.Range(0, gridPositions.Count);
