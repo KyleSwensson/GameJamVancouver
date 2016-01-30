@@ -4,6 +4,7 @@ using System.Collections;
 public class detection : MonoBehaviour {
 
 	public bool canMove;
+	public bool playerDetected;
 	// Use this for initialization
 	void Start () {
 		canMove = true;
@@ -19,14 +20,18 @@ public class detection : MonoBehaviour {
 		canMove = false;
 		if (other.CompareTag("People")){
 			canMove = false;
+			Debug.Log("people");
 		} else if (other.CompareTag("Player")){
-			//TODO
+			playerDetected = true;
 		}
 
 	}
 
 	void OnTriggerExit2D (Collider2D other){
 		canMove = true;
+		if (other.CompareTag("Player")){
+			playerDetected = false;
+		}
 	}
 
 

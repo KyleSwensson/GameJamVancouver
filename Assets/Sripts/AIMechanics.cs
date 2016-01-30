@@ -16,9 +16,13 @@ public class AIMechanics : MonoBehaviour {
 
 	public float speed;
 	public float dirSpeed;
-	
+	public float pauseLength; //how long
+	public float timeBetweenPause; //how often
+
 	private float nextDir;
 	private float nextMovement;
+	private float nextPause;
+	private bool isPause;
 
 	public Boundary boundary;
 
@@ -26,19 +30,28 @@ public class AIMechanics : MonoBehaviour {
 	void Start () {
 		curDirection = new Vector3(0.3f,0,0);
 		curDirectionName = "East";
+		isPause = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Time.time > nextMovement) {
+		if (Time.time > nextMovement && !isPause) {
 			Move();
 			nextMovement = Time.time + speed;
 		}
 
-		if (Time.time > nextDir && isAtBranch()) {
+		if (Time.time > nextDir && isAtBranch()) {	
 			changeDir();
 			nextDir = Time.time + dirSpeed;
 		}
+
+		if (Time.time > nextPause) {
+			if(canPause())
+				pause();
+			nextPause = Time.time + timeBetweenPause;
+		}
+
+		checkPlayer ();
 
 	}
 
@@ -51,6 +64,29 @@ public class AIMechanics : MonoBehaviour {
 				Mathf.Clamp(transform.position.y, boundary.yMin, boundary.yMax),
 				-0.368f
 			);
+	}
+
+	public bool canMove(int index){
+		return this.gameObject.transform.GetChild (index).gameObject.GetComponent<detection> ().canMove;
+	}
+
+	public bool playerDetected(int index){
+		return this.gameObject.transform.GetChild (index).gameObject.GetComponent<detection> ().playerDetected;
+	}
+	
+	public int convert (string dir){
+		if (dir.Equals ("East")) {
+			return 0;
+		} else if (dir.Equals ("West")) {
+			return 1;
+		} else if (dir.Equals ("North")) {
+			return 2;
+		} else if (dir.Equals ("South")) {
+			return 3;
+		} else {
+			return 0;
+		}
+		
 	}
 
 	public void changeDir(){
@@ -78,7 +114,7 @@ public class AIMechanics : MonoBehaviour {
 				index = Random.Range (0,4);
 		}
 		return index;
-
+		
 	}
 
 	public bool isAtBranch ()
@@ -96,22 +132,32 @@ public class AIMechanics : MonoBehaviour {
 		return false;
 	}	
 
-	public bool canMove(int index){
-		return this.gameObject.transform.GetChild (index).gameObject.GetComponent<detection> ().canMove;
-	}
-	
-	public int convert (string dir){
-		if (dir.Equals ("East")) {
-			return 0;
-		} else if (dir.Equals ("West")) {
-			return 1;
-		} else if (dir.Equals ("North")) {
-			return 2;
-		} else if (dir.Equals ("South")) {
-			return 3;
-		} else {
-			return 0;
-		}
 
+
+	bool canPause ()
+	{
+		int index = Random.Range (0,3);
+		if (index == 0) {
+			return true; //25% of the time
+		} else {
+			return false;
+		}
 	}
+
+	public void pause(){
+		isPause = true;
+		Invoke ("print", pauseLength);
+	}
+
+	private void print(){
+		isPause = false;
+	}
+
+	public void checkPlayer(){
+		if (playerDetected(convert (curDirectionName))){
+			Debug.Log ("FOUND YOUU!!");
+		}
+	}
+
+
 }	
