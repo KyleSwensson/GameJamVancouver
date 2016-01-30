@@ -20,20 +20,24 @@ public class BoardManager : MonoBehaviour {
 
     public int columns = 32;
     public int rows = 32;
-    public Count wallCount = new Count(140, 142); // min 5 wells per level max 10
+    public Count wallCount = new Count(40, 40); // min 5 wells per level max 10
+    public int npcMinimum = 5;
+    public int npcMaximum = 10;
     public GameObject wallTile;
     public GameObject floorTile;
+    public GameObject npcTile;
 
     private Transform boardHolder; // keeps hierarchy clean
 
 
     private List<Vector3> gridPositions = new List<Vector3>(); //keeps track of all spots in gameboard
     private List<Vector3> walledGridPositions = new List<Vector3>(); // keeps track of all of the spaces where walls have already been placed
+    private List<Vector3> freePositions = new List<Vector3>();
 
     private Vector3 topRightCornerPos = new Vector3(32 - 1, 32 - 1);
     private Vector3 topLeftCornerPos = new Vector3(1, 32 - 1);
-    private Vector3 bottomRightCornerPos = new Vector3(32 - 1, 1);
-    private Vector3 bottomLeftCornerPos = new Vector3(1, 1);
+    private Vector3 bottomRightCornerPos = new Vector3(32 - 1, 0);
+    private Vector3 bottomLeftCornerPos = new Vector3(0, 0);
 
 
 
@@ -235,8 +239,54 @@ public class BoardManager : MonoBehaviour {
             walledGridPositions.Add(pos3);
             Instantiate(tileToPlace, pos4, Quaternion.identity);
             walledGridPositions.Add(pos4);
+            
 
         }
+    }
+
+    
+    void addNPCs()
+    {
+        Vector3 baseNPCPos = new Vector3(1, 1, 0f);
+        List<Vector3> posToRemoveFromFree = new List<Vector3>();
+        Instantiate(npcTile, baseNPCPos, Quaternion.identity);
+        freePositions = gridPositions; // initially set free positions to all grid positions
+        // then for all free positions if walledPositions contains the position remove it from freepositions
+        foreach (Vector3 pos in gridPositions)
+        {
+            if (walledGridPositions.Contains(pos))
+            {
+                if (freePositions.Contains(pos))
+                {
+                    posToRemoveFromFree.Add(pos);
+                }
+            }
+        }
+
+        foreach(Vector3 pos in posToRemoveFromFree)
+        {
+            freePositions.Remove(pos);
+        }
+        Vector3 npcPosition;
+        int npcCount = Random.Range(npcMinimum, npcMaximum + 1);
+
+        for (int i = 0; i < npcCount; i++)
+        {
+            do
+            {
+                //int randomIndex = Random.Range(0, gridPositions.Count);
+                //Vector3 randomPosition = gridPositions[randomIndex];
+                Vector3 randomPosition = new Vector3(Random.Range(0, 32), Random.Range( 0, 32));
+                //freePositions.RemoveAt(randomIndex); // removes the floortile in the space to replace it w/ something else
+                npcPosition = randomPosition;
+            } while (!freePositions.Contains(npcPosition));
+
+            Instantiate(npcTile, npcPosition, Quaternion.identity);
+        }
+        
+
+
+
     }
 
     public void SetupScene(int level)
@@ -244,6 +294,8 @@ public class BoardManager : MonoBehaviour {
         BoardSetup();
         InitializeList();
         LayoutObjectAtRandom(wallTile, wallCount.minimum, wallCount.maximum);
+        addNPCs();
+
         // more stuff here
     }
 	// Use this for initialization
