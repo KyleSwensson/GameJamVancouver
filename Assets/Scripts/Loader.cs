@@ -4,7 +4,7 @@ using System.Collections;
 public class Loader : MonoBehaviour {
 
     public GameObject gameManager;
-    public GameObject AStar;
+    //public GameObject AStar;
 
     void Awake()
     {
@@ -12,7 +12,7 @@ public class Loader : MonoBehaviour {
         {
             Instantiate(gameManager);
         }
-        Instantiate(AStar);
+       // Instantiate(AStar);
     }
 	
 	// Update is called once per frame

@@ -7,7 +7,7 @@ using Pathfinding;
 
 public class EnemyAI : MonoBehaviour {
 
-	public Transform target;
+	public GameObject target;
 
     // How many times per second to update path
     public float updateRate = 2f;
@@ -36,6 +36,8 @@ public class EnemyAI : MonoBehaviour {
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
 
+        target = GameObject.FindGameObjectWithTag("Player");
+
         if (target == null)
         {
             Debug.Log("No aztic found");
@@ -43,7 +45,7 @@ public class EnemyAI : MonoBehaviour {
         }
 
         //Start a new path to aztec position, and return the result to the OnPathComplete method
-        seeker.StartPath(transform.position, target.position, OnPathComplete);
+        seeker.StartPath(transform.position, target.transform.position, OnPathComplete);
 
         StartCoroutine(UpdatePath());
 
@@ -57,7 +59,7 @@ public class EnemyAI : MonoBehaviour {
         }
 
         //Start a new path to aztec position, and return the result to the OnPathComplete method
-        seeker.StartPath(transform.position, target.position, OnPathComplete);
+        seeker.StartPath(transform.position, target.transform.position, OnPathComplete);
 
         yield return new WaitForSeconds(1f / updateRate);
         StartCoroutine(UpdatePath());

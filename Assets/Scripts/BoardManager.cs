@@ -20,9 +20,11 @@ public class BoardManager : MonoBehaviour {
 
     public int columns = 32;
     public int rows = 32;
-    public Count wallCount = new Count(140, 142); // min 5 wells per level max 10
+    public Count wallCount = new Count(50, 50); // min 5 wells per level max 10
     public GameObject wallTile;
     public GameObject floorTile;
+    public GameObject aztecMan;
+    public GameObject copMan;
     
 
     private Transform boardHolder; // keeps hierarchy clean
@@ -33,8 +35,8 @@ public class BoardManager : MonoBehaviour {
 
     private Vector3 topRightCornerPos = new Vector3(32 - 1, 32 - 1);
     private Vector3 topLeftCornerPos = new Vector3(1, 32 - 1);
-    private Vector3 bottomRightCornerPos = new Vector3(32 - 1, 1);
-    private Vector3 bottomLeftCornerPos = new Vector3(1, 1);
+    private Vector3 bottomRightCornerPos = new Vector3(32 - 1, 0);
+    private Vector3 bottomLeftCornerPos = new Vector3(5, 5);
 
 
 
@@ -56,36 +58,75 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
-    void BoardSetup()
+       void BoardSetup()
+        {
+            // sets up outer wall and floor of the game
+             float instantiateZ; 
+            boardHolder = new GameObject("Board").transform;
+            Instantiate(aztecMan, topRightCornerPos, Quaternion.identity);
+            Instantiate(copMan, bottomLeftCornerPos, Quaternion.identity);
+
+            for (int x = -1; x < columns + 1; x ++)
+            {
+                for (int y = -1; y < rows + 1; y++)
+                {
+                    // these go to cols + 1 because the edge is outside of the outer edge of the screen
+                    //prepares to instantiate a floortile
+                    GameObject toInstantiate = floorTile;
+                    instantiateZ = 2f;
+                    if (x == -1 || x == columns || y == -1 || y == rows)
+                    {
+                        // if the tile is on the outer wall instantiate it as a wall tile instad of a floor tile
+                        toInstantiate = wallTile;
+                        instantiateZ = 0f;
+                    }
+
+                    GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, instantiateZ), Quaternion.identity) as GameObject;
+
+                    instance.transform.SetParent(boardHolder);
+
+
+                }
+            }
+
+        } 
+
+   /* void BoardSetup()
     {
         // sets up outer wall and floor of the game
+        float instantiateZ;
         boardHolder = new GameObject("Board").transform;
+        Instantiate(aztecMan, topRightCornerPos, Quaternion.identity);
+        Instantiate(copMan, bottomLeftCornerPos, Quaternion.identity);
 
-        for (int x = -1; x < columns + 1; x ++)
+        for (int x = -1; x < columns + 1; x++)
         {
             for (int y = -1; y < rows + 1; y++)
             {
                 // these go to cols + 1 because the edge is outside of the outer edge of the screen
                 //prepares to instantiate a floortile
-                GameObject toInstantiate = floorTile;
+                
                 if (x == -1 || x == columns || y == -1 || y == rows)
                 {
                     // if the tile is on the outer wall instantiate it as a wall tile instad of a floor tile
+
+                    GameObject toInstantiate;
                     toInstantiate = wallTile;
+                    instantiateZ = 0f;
+                    GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, instantiateZ), Quaternion.identity) as GameObject;
                 }
 
-                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+             
 
-                instance.transform.SetParent(boardHolder);
+                //instance.transform.SetParent(boardHolder);
 
-                
+
             }
         }
-        
-    }
+    } */
 
-   
-    Vector3 RandomPosition()
+
+        Vector3 RandomPosition()
     {
         int randomIndex = Random.Range(0, gridPositions.Count);
         Vector3 randomPosition = gridPositions[randomIndex];
