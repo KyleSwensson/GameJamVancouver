@@ -23,16 +23,19 @@ public class BoardManager : MonoBehaviour {
     public Count wallCount = new Count(40, 40); // min 5 wells per level max 10
     public int npcMinimum = 5;
     public int npcMaximum = 10;
-    public GameObject wallTile;
+    public List<GameObject> shelfTiles;
+    public GameObject shelfBackTile;
     public GameObject floorTile;
     public GameObject npcTile;
-
+    public GameObject wallTile;
+    public GameObject doorTile;
     private Transform boardHolder; // keeps hierarchy clean
 
 
     private List<Vector3> gridPositions = new List<Vector3>(); //keeps track of all spots in gameboard
     private List<Vector3> walledGridPositions = new List<Vector3>(); // keeps track of all of the spaces where walls have already been placed
     private List<Vector3> freePositions = new List<Vector3>();
+    
 
     private Vector3 topRightCornerPos = new Vector3(32 - 1, 32 - 1);
     private Vector3 topLeftCornerPos = new Vector3(1, 32 - 1);
@@ -112,7 +115,7 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
-    void LayoutObjectAtRandom(GameObject tileToPlace, int minimumTiles, int maximumTiles)
+    void LayoutObjectAtRandom(List<GameObject> tileTypesToPlace, int minimumTiles, int maximumTiles)
     {
         // determines the amount of objects to spawn
         int objectCount = Random.Range(minimumTiles, maximumTiles + 1);
@@ -144,6 +147,11 @@ public class BoardManager : MonoBehaviour {
             Vector3 pos2;
             Vector3 pos3;
             Vector3 pos4;
+            int pos1Type = 0; // type of a pos is 0 or 1, 0 means its normal and will display normally, 1 means it's a vertical block 
+            // and it should only display the shelf back
+            int pos2Type = 0;
+            int pos3Type = 0;
+            int pos4Type = 0;
 
             Vector3 randomPosition = RandomPosition();
 
@@ -154,93 +162,153 @@ public class BoardManager : MonoBehaviour {
 
                 if (shapeType == 0)
                 {
+                    // square DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos1Type = 1;
                     pos2 = new Vector3(randomPosition.x - 1, randomPosition.y - 1);
                     pos3 = new Vector3(randomPosition.x, randomPosition.y - 1);
                     pos4 = new Vector3(randomPosition.x - 1, randomPosition.y);
+                    pos4Type = 1;
                 }
                 else if (shapeType == 1)
                 {
+                    // T DONE
+
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos1Type = 1;
                     pos2 = new Vector3(randomPosition.x, randomPosition.y - 1);
                     pos3 = new Vector3(randomPosition.x - 1, randomPosition.y - 1);
                     pos4 = new Vector3(randomPosition.x + 1, randomPosition.y - 1);
                 }
                 else if (shapeType == 2)
                 {
+                    // I DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    
                     pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
                     pos3 = new Vector3(randomPosition.x + 2, randomPosition.y);
                     pos4 = new Vector3(randomPosition.x + 3, randomPosition.y);
                 }
                 else  if (shapeType == 3)// if shapetile == 3
                 {
+                    // L DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                    pos1Type = 1;
                     pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
+                    
                     pos3 = new Vector3(randomPosition.x, randomPosition.y - 1);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x, randomPosition.y - 2);
+                    
                 } else if (shapeType == 4)
                 {
-                    //(x, y)(x, y+1)(x, y+2)(x, y+3)
+                    //(x, y)(x, y+1)(x, y+2)(x, y+3) sideways I DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
+                   
                     pos2 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos2Type = 1;
                     pos3 = new Vector3(randomPosition.x, randomPosition.y + 2);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x, randomPosition.y + 3);
+                    pos4Type = 1;
                 } else if (shapeType == 5)
                 {
-                    //(x, y)(x, y +1)(x + 1,y + 1)(x - 1,y + 1) /
+                    //(x, y)(x, y +1)(x + 1,y + 1)(x - 1,y + 1) / DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos2Type = 1;
                     pos3 = new Vector3(randomPosition.x + 1, randomPosition.y + 1);
                     pos4 = new Vector3(randomPosition.x - 1, randomPosition.y + 1);
                 } else if (shapeType == 6)
                 {
-                    // sideways T (x,y)(x+1,y)(x+1,y+1)(x+1,y-1) /
+                    // sideways T (x,y)(x+1,y)(x+1,y+1)(x+1,y-1) / DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
+                    pos2Type = 1;
                     pos3 = new Vector3(randomPosition.x + 1,  randomPosition.y + 1);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x + 1, randomPosition.y - 1);
+                    
 
                 } else if (shapeType == 7)
                 {
-                    // other sideways T (x,y) (x-1,y) (x-1,y+1) (x-1,y-1)/
+                    // other sideways T (x,y) (x-1,y) (x-1,y+1) (x-1,y-1)/ DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x - 1, randomPosition.y);
+                    pos2Type = 1;
                     pos3 = new Vector3(randomPosition.x - 1, randomPosition.y + 1);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x - 1, randomPosition.y - 1);
+                    
                 } else if (shapeType == 8)
                 {
-                    // flipped horizontally L (x,y) (x-1,y) (x,y-1)(x,y-2) /
+                    // flipped horizontally L (x,y) (x-1,y) (x,y-1)(x,y-2) / DONE
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x - 1, randomPosition.y);
+                    pos2Type = 1;
                     pos3 = new Vector3(randomPosition.x, randomPosition.y - 1);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x, randomPosition.y - 2);
+                    
                 } else if (shapeType == 9)
                 {
                     // flipped vertically L (x,y)(x+1,y)(x,y+1)(x,y+2) /
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x + 1, randomPosition.y);
                     pos3 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x, randomPosition.y + 2);
+                    pos4Type = 1;
                 } else // if shapeType == 10
                 {
                     // flipped vert and horiz L (x,y)(x-1,y)(x,y+1)(x,y+2) /
                     pos1 = new Vector3(randomPosition.x, randomPosition.y);
                     pos2 = new Vector3(randomPosition.x - 1, randomPosition.y);
                     pos3 = new Vector3(randomPosition.x, randomPosition.y + 1);
+                    pos3Type = 1;
                     pos4 = new Vector3(randomPosition.x, randomPosition.y + 2);
+                    pos4Type = 1;
                 }
+                
             } while (!canCreateBlockAtPos(randomPosition) || !canCreateBlockAtPos(pos1) || !canCreateBlockAtPos(pos2) || !canCreateBlockAtPos(pos3) || !canCreateBlockAtPos(pos4));
-            Instantiate(tileToPlace, pos1, Quaternion.identity);
-            walledGridPositions.Add(pos1);
-            Instantiate(tileToPlace, pos2, Quaternion.identity);
-            walledGridPositions.Add(pos2);
-            Instantiate(tileToPlace, pos3, Quaternion.identity);
-            walledGridPositions.Add(pos3);
-            Instantiate(tileToPlace, pos4, Quaternion.identity);
-            walledGridPositions.Add(pos4);
-            
 
+            int tileTypeToPlace = Random.Range(0, 5); // will generate 0,1,2,3,4;
+            if (pos1Type == 0)
+            {
+                Instantiate(tileTypesToPlace[tileTypeToPlace], pos1, Quaternion.identity);
+                walledGridPositions.Add(pos1);
+            } else
+            {
+                Instantiate(shelfBackTile, pos1, Quaternion.identity);
+                walledGridPositions.Add(pos1);
+            }
+            if (pos2Type == 0)
+            {
+                Instantiate(tileTypesToPlace[tileTypeToPlace], pos2, Quaternion.identity);
+                walledGridPositions.Add(pos2);
+            } else
+            {
+                Instantiate(shelfBackTile, pos2, Quaternion.identity);
+                walledGridPositions.Add(pos2);
+            }
+            if (pos3Type == 0)
+            {
+                Instantiate(tileTypesToPlace[tileTypeToPlace], pos3, Quaternion.identity);
+                walledGridPositions.Add(pos3);
+            } else
+            {
+                Instantiate(shelfBackTile, pos3, Quaternion.identity);
+                walledGridPositions.Add(pos3);
+            }
+            if (pos4Type == 0)
+            {
+                Instantiate(tileTypesToPlace[tileTypeToPlace], pos4, Quaternion.identity);
+                walledGridPositions.Add(pos4);
+            } else
+            {
+                Instantiate(shelfBackTile, pos4, Quaternion.identity);
+                walledGridPositions.Add(pos4);
+            }
         }
     }
 
@@ -293,7 +361,8 @@ public class BoardManager : MonoBehaviour {
     {
         BoardSetup();
         InitializeList();
-        LayoutObjectAtRandom(wallTile, wallCount.minimum, wallCount.maximum);
+        int tileTypeToPlace = Random.Range(0, 5); // will generate 0,1,2,3,4;
+        LayoutObjectAtRandom(shelfTiles, wallCount.minimum, wallCount.maximum);
         addNPCs();
 
         // more stuff here
