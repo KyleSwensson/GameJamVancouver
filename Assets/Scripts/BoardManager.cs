@@ -283,7 +283,7 @@ public class BoardManager : MonoBehaviour {
                 npcPosition = randomPosition;
             } while (!freePositions.Contains(npcPosition));
 
-            Instantiate(npcTile, npcPosition, Quaternion.identity);
+            //Instantiate(npcTile, npcPosition, Quaternion.identity);
 			Instantiate(people, npcPosition, Quaternion.identity);
         }
         
