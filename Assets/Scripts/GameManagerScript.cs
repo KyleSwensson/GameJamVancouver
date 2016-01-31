@@ -6,7 +6,7 @@ public class GameManagerScript : MonoBehaviour {
     public BoardManager boardScript;
     private int level; 
 
-
+	public bool alert = false; 
 
 	void Awake()
     {
@@ -30,5 +30,9 @@ public class GameManagerScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void setAlert(){
+		alert = true;
 	}
 }
