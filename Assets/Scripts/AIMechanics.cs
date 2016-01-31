@@ -42,6 +42,10 @@ public class AIMechanics : MonoBehaviour {
 			nextMovement = Time.time + speed;
 		}
 
+		if (!canMove (convert (curDirectionName))) {
+			changeDir ();
+		}
+
 		if (isAtBranch()) {	
 			if(Time.time > nextDir){
 				changeDir();
