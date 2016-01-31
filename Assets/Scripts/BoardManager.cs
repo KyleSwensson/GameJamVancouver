@@ -26,6 +26,7 @@ public class BoardManager : MonoBehaviour {
     public GameObject wallTile;
     public GameObject floorTile;
     public GameObject npcTile;
+	public GameObject people;
 
     private Transform boardHolder; // keeps hierarchy clean
 
@@ -250,6 +251,7 @@ public class BoardManager : MonoBehaviour {
         Vector3 baseNPCPos = new Vector3(1, 1, 0f);
         List<Vector3> posToRemoveFromFree = new List<Vector3>();
         Instantiate(npcTile, baseNPCPos, Quaternion.identity);
+
         freePositions = gridPositions; // initially set free positions to all grid positions
         // then for all free positions if walledPositions contains the position remove it from freepositions
         foreach (Vector3 pos in gridPositions)
@@ -282,6 +284,7 @@ public class BoardManager : MonoBehaviour {
             } while (!freePositions.Contains(npcPosition));
 
             Instantiate(npcTile, npcPosition, Quaternion.identity);
+			Instantiate(people, npcPosition, Quaternion.identity);
         }
         
 
